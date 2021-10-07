@@ -1,4 +1,4 @@
-# gdvk - Godot Vitual Keyboard
+# gdvk - Godot Virtual Keyboard
 Send virtual keyboard presses in godot on linux/windows
 
 # Compiling
