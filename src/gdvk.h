@@ -11,7 +11,11 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/XTest.h>
-#endif // linux
+
+#else
+#include <windows.h>
+//#include <unordered_map>
+#endif
 
 
 namespace godot {
@@ -22,9 +26,11 @@ class GDVK : public Node {
 private:
 #ifdef __linux__
     Display* xdisplay;
-
     char stringToKeyCode(const String);
+#else
+    DWORD stringToKeyCode(const String);
 #endif
+    void setKeyState(const String, bool);
 
 public:
     static void _register_methods();
