@@ -7,8 +7,8 @@ reloadable=true
 
 [entry]
 
-X11.64="res://bin/x11/libgdexample.so"
-Windows.64="res://bin/win64/libgdexample.dll"
+X11.64="res://bin/x11/libgdvk.so"
+Windows.64="res://bin/win64/libgdvk.dll"
 OSX.64=""
 
 [dependencies]
