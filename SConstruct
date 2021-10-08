@@ -71,6 +71,7 @@ elif env['platform'] in ('x11', 'linux'):
 elif env['platform'] == "windows":
     env['target_path'] += 'win64/'
     cpp_library += '.windows'
+    
     # This makes sure to keep the session environment variables on windows,
     # that way you can run scons in a vs 2017 prompt and it will find all the required tools
     env.Append(ENV=os.environ)
@@ -85,7 +86,7 @@ elif env['platform'] == "windows":
         env["RANLIB"] = "x86_64-w64-mingw32-ranlib"
 
         env.Append(CCFLAGS=['-fPIC'])
-        env.Append(CXXFLAGS=["-O3", '-std=c++14', "-Wwrite-strings"])
+        env.Append(CXXFLAGS=["-O3", '-std=c++17', "-Wwrite-strings"])
         env.Append(LINKFLAGS=["--static", "-Wl,--no-undefined", "-static-libgcc", "-static-libstdc++"])
         if env['target'] in ('debug', 'd'):
             env.Append(CCFLAGS=['-g3', '-Og'])

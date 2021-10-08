@@ -41,11 +41,11 @@ void GDVK::keyUp(const String keyName) {
     setKeyState(keyName, false);
 }
 
-void GDVK::setKeyState(const String keyName, bool state) {
+void GDVK::setKeyState(const String keyName, bool pressState) {
 #ifdef __linux__
     char code = stringToKeyCode(keyName);
 
-	if (!XTestFakeKeyEvent(xdisplay, code, state, 0)) {
+	if (!XTestFakeKeyEvent(xdisplay, code, pressState, 0)) {
 		Godot::print("Error sending keyboard event");
     }
 	XFlush(xdisplay);
@@ -58,7 +58,7 @@ void GDVK::setKeyState(const String keyName, bool state) {
 	keyInput.time = 0;
 	keyInput.dwExtraInfo = 0;
 	keyInput.dwFlags = 0; // keydown event if 0
-    if (!state) {
+    if (!pressState) {
         keyInput.dwFlags = KEYEVENTF_KEYUP;
     }
 
