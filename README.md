@@ -16,4 +16,4 @@ Add `target=release` to both commands if you're not just testing, this makes the
 # Usage
 It's not done yet but sure
 
-All the special keys (like modifiers) use the [same naming as godot](https://docs.godotengine.org/en/stable/classes/class_%40globalscope.html) minus the KEY_ prefix.
+All the special keys (like modifiers) use the [same naming as Godot](https://docs.godotengine.org/en/stable/classes/class_%40globalscope.html) minus the KEY_ prefix. Note that GDVK does not support all keys that Godot supports, only the useful ones (Make a PR if you want to add more, I'm just lazy).
