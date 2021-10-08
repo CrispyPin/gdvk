@@ -14,7 +14,6 @@
 
 #else
 #include <windows.h>
-//#include <unordered_map>
 #endif
 
 
@@ -31,6 +30,7 @@ private:
     DWORD stringToKeyCode(const String);
 #endif
     void setKeyState(const String, bool);
+    void delay(unsigned int);
 
 public:
     static void _register_methods();
@@ -38,7 +38,7 @@ public:
     GDVK();
     ~GDVK();
 
-    void _init(); // initializer called by Godot
+    void _init();
     void keyDown (const String);
     void keyUp   (const String);
     void keyPress(const String);

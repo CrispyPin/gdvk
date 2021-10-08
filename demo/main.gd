@@ -12,6 +12,7 @@ func _process(delta: float) -> void:
 	if t > 3 and !typed:
 		p()
 		typed = true
+	KEY_ENTER
 
 func p():
 	for w in "this was typed from within a godot plugin!".split(" "):

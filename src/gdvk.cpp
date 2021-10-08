@@ -3,7 +3,6 @@
 using namespace godot;
 
 void GDVK::_register_methods() {
-    //register_method("_process", &GDVK::_process);
     register_method("key_down",  &GDVK::keyDown);
     register_method("key_up",    &GDVK::keyDown);
     register_method("key_press", &GDVK::keyPress);
@@ -22,8 +21,7 @@ void GDVK::_init() {
 #ifdef __linux__
     Godot::print("Opening X11 display");
     xdisplay = XOpenDisplay(NULL);
-	if (!xdisplay)
-	{//should raise proper error instead
+	if (!xdisplay) {
 		Godot::print("Error opening X11 display");
 	}
 #endif
@@ -31,11 +29,7 @@ void GDVK::_init() {
 
 void GDVK::keyPress(const String keyName) {
     keyDown(keyName);
-#ifdef __linux__
-    usleep(1000);
-#else
-    Sleep(1);
-#endif
+    delay(1);
     keyUp(keyName);
 }
 
@@ -64,7 +58,7 @@ void GDVK::setKeyState(const String keyName, bool state) {
 	keyInput.time = 0;
 	keyInput.dwExtraInfo = 0;
 	keyInput.dwFlags = 0; // keydown event if 0
-    if (state) {
+    if (!state) {
         keyInput.dwFlags = KEYEVENTF_KEYUP;
     }
 
@@ -77,7 +71,6 @@ void GDVK::setKeyState(const String keyName, bool state) {
 #endif
 }
 
-
 #ifdef __linux__
 char GDVK::stringToKeyCode(const String keyName) {
     return XKeysymToKeycode(xdisplay, XStringToKeysym( keyName.utf8().get_data() ));
@@ -85,6 +78,14 @@ char GDVK::stringToKeyCode(const String keyName) {
 #else
 DWORD GDVK::stringToKeyCode(const String keyName) {
     char key = keyName.utf8().get_data()[0];
-    return (DWORD) VkKeyScanExA(key, GetKeyboardLayout(0));
+    return VkKeyScanExA(key, GetKeyboardLayout(0));
 }
 #endif
+
+void GDVK::delay(unsigned int ms) {
+#ifdef __linux__
+    usleep(1000 * ms);
+#else
+    Sleep(ms);
+#endif
+}
