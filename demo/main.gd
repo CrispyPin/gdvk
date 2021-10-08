@@ -2,22 +2,30 @@ extends Node
 
 
 var t = 0
-var typed = false
+var progress = 0
+const keys = [
+	"SUPER",
+	"C",
+	"H",
+	"R",
+	"O",
+	"M",
+	"ENTER",
+	"C",
+	"A",
+	"T",
+	"ENTER",
+	"F5",
+]
 
 func _ready() -> void:
 	pass
 
 func _process(delta: float) -> void:
 	t += delta
-	if t > 3 and !typed:
-		p()
-		typed = true
-
-func p():
-	for w in "this was typed from within a godot plugin!".split(" "):
-		word(w)
-		$Keyboard.key_press("space")
-
-func word(w):
-	for c in w:
-		$Keyboard.key_press(c)
+	if t > 0.5:
+		$Keyboard.key_press(keys[progress])
+		progress += 1
+		t = 0
+		if progress >= len(keys):
+			get_tree().quit()

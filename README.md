@@ -1,6 +1,8 @@
 # gdvk - Godot Virtual Keyboard
 Send virtual keyboard presses in godot on linux/windows
 
+Please inform me about how my code is shit; I'm new to C++.
+
 # Compiling
 ```
 cd godot-cpp
