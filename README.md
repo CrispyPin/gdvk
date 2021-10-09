@@ -12,3 +12,8 @@ scons platform=<PLATFORM>
 ```
 Change `<PLATFORM>` to `linux`/`windows` and the 12 in `-j12` to the number of threads on your system.
 Add `target=release` to both commands if you're not just testing, this makes the binary a lot smaller and faster.
+
+# Usage
+It's not done yet but sure
+
+All the special keys (like modifiers) use the [same naming as Godot](https://docs.godotengine.org/en/stable/classes/class_%40globalscope.html) minus the KEY_ prefix. Note that GDVK does not support all keys that Godot supports, only the useful ones (Make a PR if you want to add more, I'm just lazy).
