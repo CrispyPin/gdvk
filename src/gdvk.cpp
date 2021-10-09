@@ -6,7 +6,7 @@ using namespace std;
 void GDVK::_register_methods() {
 	register_method("key_down",  &GDVK::keyDown);
 	register_method("key_up",    &GDVK::keyUp);
-	register_method("key_press", &GDVK::keyPress);
+	register_method("press", &GDVK::keyPress);
 }
 
 GDVK::GDVK() {
@@ -44,13 +44,14 @@ void GDVK::keyUp(const String keyName) {
 }
 
 void GDVK::setKeyState(const String keyName, bool pressState) {
-	unsigned long keyCode = lookupKeyCode(keyName);
-#ifdef __linux__
+	KEYCODE keyCode = lookupKeycode(keyName);
 
+#ifdef __linux__
 	if (!XTestFakeKeyEvent(xdisplay, keyCode, pressState, 0)) {
 		Godot::print("Error sending keyboard event");
 	}
 	XFlush(xdisplay);
+
 #else
 	KEYBDINPUT keyInput;
 	keyInput.wVk = keyCode;
@@ -67,23 +68,21 @@ void GDVK::setKeyState(const String keyName, bool pressState) {
 	inputEvent.ki = keyInput;
 
 	SendInput(1, &inputEvent, sizeof(inputEvent));
-
 #endif
 }
 
-unsigned long GDVK::lookupKeyCode(const String keyName) {
+KEYCODE GDVK::lookupKeycode(const String keyName) {
 	const char* key_name = keyName.utf8().get_data();
 	if (keymap.find(key_name) != keymap.end()) {
 		return keymap[key_name];
 	}
 #ifdef _DEBUG
-	//Godot::print(key_name);
 	Godot::print("Warning: keyName: '" + keyName + "' not in keymap, guessing (platform dependent)");
 #endif
-	return stringToKeyCode(key_name);
+	return stringToKeycode(key_name);
 }
 
-unsigned long GDVK::stringToKeyCode(const char* key_name) {//does not work with longer key names
+KEYCODE GDVK::stringToKeycode(const char* key_name) {//does not work with longer key names on windows
 #ifdef __linux__
 	return XKeysymToKeycode(xdisplay, XStringToKeysym(key_name));
 #else
@@ -100,7 +99,7 @@ void GDVK::delay(unsigned int ms) {
 }
 
 #ifdef __linux__
-unsigned long GDVK::keysymToKeyCode(unsigned long keysym) {
+KEYCODE GDVK::keysymToKeycode(unsigned long keysym) {
 	return XKeysymToKeycode(xdisplay, keysym);
 }
 #endif
@@ -117,82 +116,82 @@ void GDVK::generateKeymap() {
 	F1 - F12
 	KP_1 - KP_9
 */
-	keymap["ESCAPE"]        = keysymToKeyCode(XK_Escape);
-	keymap["TAB"]           = keysymToKeyCode(XK_Tab);
-	keymap["BACKSPACE"]     = keysymToKeyCode(XK_BackSpace);
-	keymap["ENTER"]         = keysymToKeyCode(XK_Return);
-	keymap["KP_ENTER"]      = keysymToKeyCode(XK_KP_Enter);
-	keymap["INSERT"]        = keysymToKeyCode(XK_Insert);
-	keymap["DELETE"]        = keysymToKeyCode(XK_Delete);
-	keymap["PRINT"]         = keysymToKeyCode(XK_Print);
-	keymap["HOME"]          = keysymToKeyCode(XK_Home);
-	keymap["END"]           = keysymToKeyCode(XK_End);
-	keymap["LEFT"]          = keysymToKeyCode(XK_Left);
-	keymap["UP"]            = keysymToKeyCode(XK_Up);
-	keymap["RIGHT"]         = keysymToKeyCode(XK_Right);
-	keymap["DOWN"]          = keysymToKeyCode(XK_Down);
-	keymap["PAGEUP"]        = keysymToKeyCode(XK_Page_Up);
-	keymap["PAGEDOWN"]      = keysymToKeyCode(XK_Page_Down);
-	keymap["SHIFT"]         = keysymToKeyCode(XK_Shift_L);
-	keymap["CONTROL"]       = keysymToKeyCode(XK_Control_L);
-	keymap["ALT"]           = keysymToKeyCode(XK_Alt_L);
-	keymap["CAPSLOCK"]      = keysymToKeyCode(XK_Caps_Lock);
-	keymap["NUMLOCK"]       = keysymToKeyCode(XK_Num_Lock);
-	keymap["SCROLLLOCK"]    = keysymToKeyCode(XK_Scroll_Lock);
-	keymap["KP_MULTIPLY"]   = keysymToKeyCode(XK_KP_Multiply);
-	keymap["KP_DIVIDE"]     = keysymToKeyCode(XK_KP_Divide);
-	keymap["KP_SUBTRACT"]   = keysymToKeyCode(XK_KP_Subtract);
-	keymap["KP_ADD"]        = keysymToKeyCode(XK_KP_Add);
-	keymap["KP_PERIOD"]     = keysymToKeyCode(XK_KP_Separator);
-	keymap["SUPER"]         = keysymToKeyCode(XK_Super_L);
-	keymap["SUPER_L"]       = keysymToKeyCode(XK_Super_L);
-	keymap["SUPER_R"]       = keysymToKeyCode(XK_Super_R);
-	keymap["MENU"]          = keysymToKeyCode(XK_Menu);
+	keymap["ESCAPE"]        = keysymToKeycode(XK_Escape);
+	keymap["TAB"]           = keysymToKeycode(XK_Tab);
+	keymap["BACKSPACE"]     = keysymToKeycode(XK_BackSpace);
+	keymap["ENTER"]         = keysymToKeycode(XK_Return);
+	keymap["KP_ENTER"]      = keysymToKeycode(XK_KP_Enter);
+	keymap["INSERT"]        = keysymToKeycode(XK_Insert);
+	keymap["DELETE"]        = keysymToKeycode(XK_Delete);
+	keymap["PRINT"]         = keysymToKeycode(XK_Print);
+	keymap["HOME"]          = keysymToKeycode(XK_Home);
+	keymap["END"]           = keysymToKeycode(XK_End);
+	keymap["LEFT"]          = keysymToKeycode(XK_Left);
+	keymap["UP"]            = keysymToKeycode(XK_Up);
+	keymap["RIGHT"]         = keysymToKeycode(XK_Right);
+	keymap["DOWN"]          = keysymToKeycode(XK_Down);
+	keymap["PAGEUP"]        = keysymToKeycode(XK_Page_Up);
+	keymap["PAGEDOWN"]      = keysymToKeycode(XK_Page_Down);
+	keymap["SHIFT"]         = keysymToKeycode(XK_Shift_L);
+	keymap["CONTROL"]       = keysymToKeycode(XK_Control_L);
+	keymap["ALT"]           = keysymToKeycode(XK_Alt_L);
+	keymap["CAPSLOCK"]      = keysymToKeycode(XK_Caps_Lock);
+	keymap["NUMLOCK"]       = keysymToKeycode(XK_Num_Lock);
+	keymap["SCROLLLOCK"]    = keysymToKeycode(XK_Scroll_Lock);
+	keymap["KP_MULTIPLY"]   = keysymToKeycode(XK_KP_Multiply);
+	keymap["KP_DIVIDE"]     = keysymToKeycode(XK_KP_Divide);
+	keymap["KP_SUBTRACT"]   = keysymToKeycode(XK_KP_Subtract);
+	keymap["KP_ADD"]        = keysymToKeycode(XK_KP_Add);
+	keymap["KP_PERIOD"]     = keysymToKeycode(XK_KP_Separator);
+	keymap["SUPER"]         = keysymToKeycode(XK_Super_L);
+	keymap["SUPER_L"]       = keysymToKeycode(XK_Super_L);
+	keymap["SUPER_R"]       = keysymToKeycode(XK_Super_R);
+	keymap["MENU"]          = keysymToKeycode(XK_Menu);
 
-	keymap["BACK"]          = keysymToKeyCode(XF86XK_Back);// browser back
-	keymap["FORWARD"]       = keysymToKeyCode(XF86XK_Forward);// browser forward
-	keymap["VOLUMEDOWN"]    = keysymToKeyCode(XF86XK_AudioLowerVolume);
-	keymap["VOLUMEUP"]      = keysymToKeyCode(XF86XK_AudioRaiseVolume);
-	keymap["MEDIAPLAY"]     = keysymToKeyCode(XF86XK_AudioPlay);
-	keymap["MEDIASTOP"]     = keysymToKeyCode(XF86XK_AudioStop);
-	keymap["MEDIAPREVIOUS"] = keysymToKeyCode(XF86XK_AudioPrev);
-	keymap["MEDIANEXT"]     = keysymToKeyCode(XF86XK_AudioNext);
+	keymap["BACK"]          = keysymToKeycode(XF86XK_Back);// browser back
+	keymap["FORWARD"]       = keysymToKeycode(XF86XK_Forward);// browser forward
+	keymap["VOLUMEDOWN"]    = keysymToKeycode(XF86XK_AudioLowerVolume);
+	keymap["VOLUMEUP"]      = keysymToKeycode(XF86XK_AudioRaiseVolume);
+	keymap["MEDIAPLAY"]     = keysymToKeycode(XF86XK_AudioPlay);
+	keymap["MEDIASTOP"]     = keysymToKeycode(XF86XK_AudioStop);
+	keymap["MEDIAPREVIOUS"] = keysymToKeycode(XF86XK_AudioPrev);
+	keymap["MEDIANEXT"]     = keysymToKeycode(XF86XK_AudioNext);
 
-	keymap["SPACE"]         = keysymToKeyCode(XK_space);
-	keymap["EXCLAM"]        = keysymToKeyCode(XK_exclam);       // !
-	keymap["QUOTEDBL"]      = keysymToKeyCode(XK_quotedbl);     // "
-	keymap["NUMBERSIGN"]    = keysymToKeyCode(XK_numbersign);   // #
-	keymap["DOLLAR"]        = keysymToKeyCode(XK_dollar);       // $
-	keymap["PERCENT"]       = keysymToKeyCode(XK_percent);      // %
-	keymap["AMPERSAND"]     = keysymToKeyCode(XK_ampersand);    // &
-	keymap["APOSTROPHE"]    = keysymToKeyCode(XK_apostrophe);   // '
-	keymap["PARENLEFT"]     = keysymToKeyCode(XK_parenleft);    // (
-	keymap["PARENRIGHT"]    = keysymToKeyCode(XK_parenright);   // )
-	keymap["ASTERISK"]      = keysymToKeyCode(XK_asterisk);     // *
-	keymap["PLUS"]          = keysymToKeyCode(XK_plus);         // +
-	keymap["COMMA"]         = keysymToKeyCode(XK_comma);        // ,
-	keymap["MINUS"]         = keysymToKeyCode(XK_minus);        // -
-	keymap["PERIOD"]        = keysymToKeyCode(XK_period);       // .
-	keymap["SLASH"]         = keysymToKeyCode(XK_slash);        // /
+	keymap["SPACE"]         = keysymToKeycode(XK_space);
+	keymap["EXCLAM"]        = keysymToKeycode(XK_exclam);       // !
+	keymap["QUOTEDBL"]      = keysymToKeycode(XK_quotedbl);     // "
+	keymap["NUMBERSIGN"]    = keysymToKeycode(XK_numbersign);   // #
+	keymap["DOLLAR"]        = keysymToKeycode(XK_dollar);       // $
+	keymap["PERCENT"]       = keysymToKeycode(XK_percent);      // %
+	keymap["AMPERSAND"]     = keysymToKeycode(XK_ampersand);    // &
+	keymap["APOSTROPHE"]    = keysymToKeycode(XK_apostrophe);   // '
+	keymap["PARENLEFT"]     = keysymToKeycode(XK_parenleft);    // (
+	keymap["PARENRIGHT"]    = keysymToKeycode(XK_parenright);   // )
+	keymap["ASTERISK"]      = keysymToKeycode(XK_asterisk);     // *
+	keymap["PLUS"]          = keysymToKeycode(XK_plus);         // +
+	keymap["COMMA"]         = keysymToKeycode(XK_comma);        // ,
+	keymap["MINUS"]         = keysymToKeycode(XK_minus);        // -
+	keymap["PERIOD"]        = keysymToKeycode(XK_period);       // .
+	keymap["SLASH"]         = keysymToKeycode(XK_slash);        // /
 
-	keymap["COLON"]         = keysymToKeyCode(XK_colon);        // :
-	keymap["SEMICOLON"]     = keysymToKeyCode(XK_semicolon);    // ;
-	keymap["LESS"]          = keysymToKeyCode(XK_less);         // <
-	keymap["EQUAL"]         = keysymToKeyCode(XK_equal);        // =
-	keymap["GREATER"]       = keysymToKeyCode(XK_greater);      // >
-	keymap["QUESTION"]      = keysymToKeyCode(XK_question);     // ?
-	keymap["AT"]            = keysymToKeyCode(XK_at);           // @
+	keymap["COLON"]         = keysymToKeycode(XK_colon);        // :
+	keymap["SEMICOLON"]     = keysymToKeycode(XK_semicolon);    // ;
+	keymap["LESS"]          = keysymToKeycode(XK_less);         // <
+	keymap["EQUAL"]         = keysymToKeycode(XK_equal);        // =
+	keymap["GREATER"]       = keysymToKeycode(XK_greater);      // >
+	keymap["QUESTION"]      = keysymToKeycode(XK_question);     // ?
+	keymap["AT"]            = keysymToKeycode(XK_at);           // @
 
-	keymap["BRACKETLEFT"]   = keysymToKeyCode(XK_bracketleft);  // [
-	keymap["BACKSLASH"]     = keysymToKeyCode(XK_backslash);    // \  .
-	keymap["BRACKETRIGHT"]  = keysymToKeyCode(XK_bracketright); // ]
-	keymap["ASCIICIRCUM"]   = keysymToKeyCode(XK_asciicircum);  // ^
+	keymap["BRACKETLEFT"]   = keysymToKeycode(XK_bracketleft);  // [
+	keymap["BACKSLASH"]     = keysymToKeycode(XK_backslash);    // \  .
+	keymap["BRACKETRIGHT"]  = keysymToKeycode(XK_bracketright); // ]
+	keymap["ASCIICIRCUM"]   = keysymToKeycode(XK_asciicircum);  // ^
 	// localisation
-	keymap["DIAERSIS"]      = keysymToKeyCode(XK_dead_diaeresis);// ¨
-	keymap["ARING"]         = keysymToKeyCode(XK_Aring);        // Å
-	keymap["ADIAERSIS"]     = keysymToKeyCode(XK_Adiaeresis);   // Ä
-	keymap["ODIAERSIS"]     = keysymToKeyCode(XK_Odiaeresis);   // Ö
-	keymap["UDIAERSIS"]     = keysymToKeyCode(XK_Udiaeresis);   // Ü
+	keymap["DIAERSIS"]      = keysymToKeycode(XK_dead_diaeresis);// ¨
+	keymap["ARING"]         = keysymToKeycode(XK_Aring);        // Å
+	keymap["ADIAERSIS"]     = keysymToKeycode(XK_Adiaeresis);   // Ä
+	keymap["ODIAERSIS"]     = keysymToKeycode(XK_Odiaeresis);   // Ö
+	keymap["UDIAERSIS"]     = keysymToKeycode(XK_Udiaeresis);   // Ü
 
 
 #else //windows

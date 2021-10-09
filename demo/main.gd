@@ -35,7 +35,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	t += delta
 	if t > 0.5:
-		GDVK.key_press(keys[progress])
+		GDVK.press(keys[progress])
 		progress += 1
 		t = 0
 		if progress >= len(keys):

@@ -20,6 +20,8 @@
 #include <windows.h>
 #endif
 
+#define KEYCODE unsigned long
+
 using namespace std;
 
 namespace godot {
@@ -31,7 +33,7 @@ private:
 #ifdef __linux__
 	Display* xdisplay;
 
-	unsigned long keysymToKeyCode(unsigned long);
+	KEYCODE keysymToKeycode(unsigned long); // just calls XKeysymToKeycode for xdisplay
 #endif
 	void setKeyState(const String, bool);
 	void delay(unsigned int);
@@ -39,8 +41,8 @@ private:
 	unordered_map<string, unsigned int> keymap;
 	void generateKeymap();
 
-	unsigned long stringToKeyCode(const char*);
-	unsigned long lookupKeyCode(const String);
+	KEYCODE stringToKeycode(const char*);
+	KEYCODE lookupKeycode(const String);
 
 public:
 	static void _register_methods();
