@@ -22,17 +22,10 @@ const keys = [
 	"A",
 	"A",
 	"ADIAERSIS",
-	"ADIAERSIS",
-	"ADIAERSIS",
+	"ARING",
 	"DIAERSIS",
 	"O",
-	"O",
-	"A",
-	"A",
-	"A",
-	"A",
-	"A",
-	"A",
+	"PERIOD",
 ]
 
 
@@ -42,7 +35,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	t += delta
 	if t > 0.5:
-		$Keyboard.key_press(keys[progress])
+		GDVK.key_press(keys[progress])
 		progress += 1
 		t = 0
 		if progress >= len(keys):

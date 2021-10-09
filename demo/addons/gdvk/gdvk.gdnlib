@@ -2,14 +2,13 @@
 
 singleton=false
 load_once=true
-symbol_prefix="godot_"
+symbol_prefix="gdvk_"
 reloadable=true
 
 [entry]
 
-X11.64="res://bin/x11/libgdvk.so"
-Windows.64="res://bin/win64/libgdvk.dll"
-OSX.64=""
+X11.64="res://addons/gdvk/bin/x11/libgdvk.so"
+Windows.64="res://addons/gdvk/bin/win64/libgdvk.dll"
 
 [dependencies]
 
