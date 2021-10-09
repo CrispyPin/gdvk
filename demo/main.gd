@@ -4,19 +4,37 @@ extends Node
 var t = 0
 var progress = 0
 const keys = [
-	"SUPER",
-	"C",
-	"H",
-	"R",
-	"O",
-	"M",
-	"ENTER",
-	"C",
+#	"SUPER",
+#	"C",
+#	"H",
+#	"R",
+#	"O",
+#	"M",
+#	"ENTER",
+#	"C",
+#	"A",
+#	"T",
+#	"ENTER",
+#	"F5",
+#	"VOLUMEDOWN",
 	"A",
-	"T",
-	"ENTER",
-	"F5",
+	"A",
+	"A",
+	"A",
+	"ADIAERSIS",
+	"ADIAERSIS",
+	"ADIAERSIS",
+	"DIAERSIS",
+	"O",
+	"O",
+	"A",
+	"A",
+	"A",
+	"A",
+	"A",
+	"A",
 ]
+
 
 func _ready() -> void:
 	pass
@@ -28,4 +46,5 @@ func _process(delta: float) -> void:
 		progress += 1
 		t = 0
 		if progress >= len(keys):
+			print("Done")
 			get_tree().quit()

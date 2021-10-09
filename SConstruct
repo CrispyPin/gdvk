@@ -62,8 +62,10 @@ elif env['platform'] in ('x11', 'linux'):
 
     if env['target'] in ('debug', 'd'):
         env.Append(CCFLAGS=['-g3', '-Og'])
+        env.Append(CPPDEFINES=['_DEBUG'])
     else:
         env.Append(CCFLAGS=['-g', '-O3'])
+        env.Append(CPPDEFINES=['NDEBUG'])
     
     env.Append(LIBS=["X11", "Xtst"])
     
@@ -90,7 +92,9 @@ elif env['platform'] == "windows":
         env.Append(LINKFLAGS=["--static", "-Wl,--no-undefined", "-static-libgcc", "-static-libstdc++"])
         if env['target'] in ('debug', 'd'):
             env.Append(CCFLAGS=['-g3', '-Og'])
+            env.Append(CPPDEFINES=['_DEBUG'])
         else:
+            env.Append(CPPDEFINES=['NDEBUG'])
             env.Append(CCFLAGS=['-g', '-O3'])
 
     elif host_platform == "windows":

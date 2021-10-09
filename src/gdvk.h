@@ -13,6 +13,7 @@
 //#include <X11/Xlib.h>
 //#include <X11/Xutil.h>
 #include <X11/keysym.h>
+#include <X11/XF86keysym.h>
 #include <X11/extensions/XTest.h>
 
 #else
@@ -29,6 +30,8 @@ class GDVK : public Node {
 private:
 #ifdef __linux__
     Display* xdisplay;
+
+    unsigned long keysymToKeyCode(unsigned long);
 #endif
     void setKeyState(const String, bool);
     void delay(unsigned int);
