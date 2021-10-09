@@ -25,33 +25,33 @@ using namespace std;
 namespace godot {
 
 class GDVK : public Node {
-    GODOT_CLASS(GDVK, Node)
+	GODOT_CLASS(GDVK, Node)
 
 private:
 #ifdef __linux__
-    Display* xdisplay;
+	Display* xdisplay;
 
-    unsigned long keysymToKeyCode(unsigned long);
+	unsigned long keysymToKeyCode(unsigned long);
 #endif
-    void setKeyState(const String, bool);
-    void delay(unsigned int);
+	void setKeyState(const String, bool);
+	void delay(unsigned int);
 
-    unordered_map<string, unsigned int> keymap;
-    void generateKeymap();
+	unordered_map<string, unsigned int> keymap;
+	void generateKeymap();
 
-    unsigned long stringToKeyCode(const char*);
-    unsigned long lookupKeyCode(const String);
+	unsigned long stringToKeyCode(const char*);
+	unsigned long lookupKeyCode(const String);
 
 public:
-    static void _register_methods();
+	static void _register_methods();
 
-    GDVK();
-    ~GDVK();
+	GDVK();
+	~GDVK();
 
-    void _init();
-    void keyDown (const String);
-    void keyUp   (const String);
-    void keyPress(const String);
+	void _init();
+	void keyDown (const String);
+	void keyUp   (const String);
+	void keyPress(const String);
 };
 
 }
