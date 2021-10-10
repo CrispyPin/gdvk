@@ -4,9 +4,9 @@ using namespace godot;
 using namespace std;
 
 void GDVK::_register_methods() {
-	register_method("key_down",  &GDVK::keyDown);
-	register_method("key_up",    &GDVK::keyUp);
-	register_method("press", &GDVK::keyPress);
+	register_method("key_down", &GDVK::keyDown);
+	register_method("key_up",   &GDVK::keyUp);
+	register_method("press", 	&GDVK::keyPress);
 }
 
 GDVK::GDVK() {
@@ -20,13 +20,14 @@ GDVK::~GDVK() {
 
 void GDVK::_init() {
 #ifdef __linux__
-	Godot::print("Opening X11 display");
+	Godot::print("Opening X11 display.");
 	xdisplay = XOpenDisplay(NULL);
 	if (!xdisplay) {
 		Godot::print("Error opening X11 display");
 	}
 #endif
 	generateKeymap();
+	Godot::print("GDVK loaded.");
 }
 
 void GDVK::keyPress(const String keyName) {
@@ -48,20 +49,20 @@ void GDVK::setKeyState(const String keyName, bool pressState) {
 
 #ifdef __linux__
 	if (!XTestFakeKeyEvent(xdisplay, keyCode, pressState, 0)) {
-		Godot::print("Error sending keyboard event");
+		Godot::print("Error sending keyboard event for key '" + keyName + "'");
 	}
 	XFlush(xdisplay);
 
 #else
 	KEYBDINPUT keyInput;
 	keyInput.wVk = keyCode;
+	keyInput.dwFlags = !pressState & KEYEVENTF_KEYUP; // keydown event if 0
 	keyInput.wScan = 0; // something unicode
-	keyInput.time = 0;
 	keyInput.dwExtraInfo = 0;
-	keyInput.dwFlags = 0; // keydown event if 0
-	if (!pressState) {
-		keyInput.dwFlags = KEYEVENTF_KEYUP;
-	}
+	keyInput.time = 0;
+	//if (!pressState) {
+	//	keyInput.dwFlags = KEYEVENTF_KEYUP;
+	//}
 
 	INPUT inputEvent;
 	inputEvent.type = INPUT_KEYBOARD;
@@ -73,6 +74,7 @@ void GDVK::setKeyState(const String keyName, bool pressState) {
 
 KEYCODE GDVK::lookupKeycode(const String keyName) {
 	const char* key_name = keyName.utf8().get_data();
+
 	if (keymap.find(key_name) != keymap.end()) {
 		return keymap[key_name];
 	}
@@ -105,12 +107,14 @@ KEYCODE GDVK::keysymToKeycode(unsigned long keysym) {
 #endif
 
 void GDVK::generateKeymap() {
+#ifdef _DEBUG
 	Godot::print("Generating key map");
+#endif
 	// contains keycodes for special keys that have different names on windows and linux.
 	// uses godot naming
 #ifdef __linux__
 /*
-	Same name in X11:
+	Same name in X11 (omitted here):
 	A - Z
 	1 - 9
 	F1 - F12
@@ -142,14 +146,14 @@ void GDVK::generateKeymap() {
 	keymap["KP_DIVIDE"]     = keysymToKeycode(XK_KP_Divide);
 	keymap["KP_SUBTRACT"]   = keysymToKeycode(XK_KP_Subtract);
 	keymap["KP_ADD"]        = keysymToKeycode(XK_KP_Add);
-	keymap["KP_PERIOD"]     = keysymToKeycode(XK_KP_Separator);
+	keymap["KP_PERIOD"]     = keysymToKeycode(XK_KP_Separator); // period or comma on keypad
 	keymap["SUPER"]         = keysymToKeycode(XK_Super_L);
 	keymap["SUPER_L"]       = keysymToKeycode(XK_Super_L);
 	keymap["SUPER_R"]       = keysymToKeycode(XK_Super_R);
 	keymap["MENU"]          = keysymToKeycode(XK_Menu);
 
-	keymap["BACK"]          = keysymToKeycode(XF86XK_Back);// browser back
-	keymap["FORWARD"]       = keysymToKeycode(XF86XK_Forward);// browser forward
+	keymap["BACK"]          = keysymToKeycode(XF86XK_Back);     // browser back
+	keymap["FORWARD"]       = keysymToKeycode(XF86XK_Forward);  // browser forward
 	keymap["VOLUMEDOWN"]    = keysymToKeycode(XF86XK_AudioLowerVolume);
 	keymap["VOLUMEUP"]      = keysymToKeycode(XF86XK_AudioRaiseVolume);
 	keymap["MEDIAPLAY"]     = keysymToKeycode(XF86XK_AudioPlay);
@@ -173,6 +177,7 @@ void GDVK::generateKeymap() {
 	keymap["MINUS"]         = keysymToKeycode(XK_minus);        // -
 	keymap["PERIOD"]        = keysymToKeycode(XK_period);       // .
 	keymap["SLASH"]         = keysymToKeycode(XK_slash);        // /
+	keymap["BACKSLASH"]     = keysymToKeycode(XK_backslash);    // \    -
 
 	keymap["COLON"]         = keysymToKeycode(XK_colon);        // :
 	keymap["SEMICOLON"]     = keysymToKeycode(XK_semicolon);    // ;
@@ -183,23 +188,45 @@ void GDVK::generateKeymap() {
 	keymap["AT"]            = keysymToKeycode(XK_at);           // @
 
 	keymap["BRACKETLEFT"]   = keysymToKeycode(XK_bracketleft);  // [
-	keymap["BACKSLASH"]     = keysymToKeycode(XK_backslash);    // \  .
 	keymap["BRACKETRIGHT"]  = keysymToKeycode(XK_bracketright); // ]
-	keymap["ASCIICIRCUM"]   = keysymToKeycode(XK_asciicircum);  // ^
+	keymap["BRACELEFT"]     = keysymToKeycode(XK_braceleft);    // {
+	keymap["BRACERIGHT"]    = keysymToKeycode(XK_braceright);   // }
+
+	keymap["ASCIICIRCUM"]   = keysymToKeycode(XK_asciicircum);  // ^ character
+	keymap["ASCIITILDE"]    = keysymToKeycode(XK_asciitilde);   // ~ character
+	keymap["QUOTELEFT"]     = keysymToKeycode(XK_quoteleft);    // ` character
+	keymap["ASCIIGRAVE"]    = keysymToKeycode(XK_quoteleft);    // ` character
+
+	// dead keys for accents
+	keymap["ACUTE"]         = keysymToKeycode(XK_dead_acute);   // ´
+	keymap["CEDILLA"]       = keysymToKeycode(XK_dead_cedilla); // ¸
+	keymap["CIRCUM"]        = keysymToKeycode(XK_dead_circumflex); // ^
+	keymap["DIAERSIS"]      = keysymToKeycode(XK_dead_diaeresis);  // ¨
+	keymap["TILDE"]         = keysymToKeycode(XK_dead_tilde);   // ~
+	keymap["GRAVE"]         = keysymToKeycode(XK_dead_grave);   // `
+	
 	// localisation
-	keymap["DIAERSIS"]      = keysymToKeycode(XK_dead_diaeresis);// ¨
 	keymap["ARING"]         = keysymToKeycode(XK_Aring);        // Å
 	keymap["ADIAERSIS"]     = keysymToKeycode(XK_Adiaeresis);   // Ä
 	keymap["ODIAERSIS"]     = keysymToKeycode(XK_Odiaeresis);   // Ö
-	keymap["UDIAERSIS"]     = keysymToKeycode(XK_Udiaeresis);   // Ü
 
+	keymap["AE"]            = keysymToKeycode(XK_AE);           // Æ
+	keymap["OOBLIQUE"]      = keysymToKeycode(XK_Ooblique);     // Ø
+
+	keymap["UDIAERSIS"]     = keysymToKeycode(XK_Udiaeresis);   // Ü
+	keymap["SSHARP"]        = keysymToKeycode(XK_ssharp);       // ß
 
 #else //windows
+/*
+	Same name in windows (omitted here):
+	A - Z
+	1 - 9
+*/
 	keymap["ESCAPE"]        = VK_ESCAPE;
 	keymap["TAB"]           = VK_TAB;
 	keymap["BACKSPACE"]     = VK_BACK;
 	keymap["ENTER"]         = VK_RETURN;
-	keymap["KP_ENTER"]      = 0;
+	keymap["KP_ENTER"]      = VK_RETURN; // should probably be different
 	keymap["INSERT"]        = VK_INSERT;
 	keymap["DELETE"]        = VK_DELETE;
 	keymap["PRINT"]         = VK_SNAPSHOT;
@@ -253,6 +280,7 @@ void GDVK::generateKeymap() {
 	keymap["MINUS"]         = VK_OEM_MINUS;
 	keymap["PERIOD"]        = VK_OEM_PERIOD;
 	keymap["SLASH"]         = 0;
+	keymap["BACKSLASH"]     = 0;
 
 	keymap["COLON"]         = 0;
 	keymap["SEMICOLON"]     = 0;
@@ -263,15 +291,33 @@ void GDVK::generateKeymap() {
 	keymap["AT"]            = 0;
 
 	keymap["BRACKETLEFT"]   = 0;
-	keymap["BACKSLASH"]     = 0;
 	keymap["BRACKETRIGHT"]  = 0;
+	keymap["BRACELEFT"]     = 0;
+	keymap["BRACERIGHT"]    = 0;
+
 	keymap["ASCIICIRCUM"]   = 0;
-	// localisation
+	keymap["ASCIITILDE"]    = 0;
+	keymap["QUOTELEFT"]     = 0;
+	keymap["ASCIIGRAVE"]    = 0;
+
+	// dead keys for accents
+	keymap["ACUTE"]         = 0;
+	keymap["CEDILLA"]       = 0;
+	keymap["CIRCUM"]        = 0;
 	keymap["DIAERSIS"]      = 0;
+	keymap["TILDE"]         = 0;
+	keymap["GRAVE"]         = 0;
+	
+	// localisation
 	keymap["ARING"]         = 0;
 	keymap["ADIAERSIS"]     = 0;
 	keymap["ODIAERSIS"]     = 0;
-	
+
+	keymap["AE"]            = 0;
+	keymap["OOBLIQUE"]      = 0;
+
+	keymap["UDIAERSIS"]     = 0;
+	keymap["SSHARP"]        = 0;
 
 	keymap["KP_0"]    = VK_NUMPAD0;
 	keymap["KP_1"]    = VK_NUMPAD1;

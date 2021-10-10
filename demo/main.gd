@@ -26,6 +26,9 @@ const keys = [
 	"DIAERSIS",
 	"O",
 	"PERIOD",
+	"ASCIIGRAVE",
+	"GRAVE",
+	"E",
 ]
 
 
