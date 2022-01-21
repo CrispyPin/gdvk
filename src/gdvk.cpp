@@ -137,8 +137,14 @@ void GDVK::generateKeymap() {
 	keymap["PAGEUP"]        = keysymToKeycode(XK_Page_Up);
 	keymap["PAGEDOWN"]      = keysymToKeycode(XK_Page_Down);
 	keymap["SHIFT"]         = keysymToKeycode(XK_Shift_L);
+	keymap["SHIFT_L"]       = keysymToKeycode(XK_Shift_L);
+	keymap["SHIFT_R"]       = keysymToKeycode(XK_Shift_R);
 	keymap["CONTROL"]       = keysymToKeycode(XK_Control_L);
+	keymap["CONTROL_L"]     = keysymToKeycode(XK_Control_L);
+	keymap["CONTROL_R"]     = keysymToKeycode(XK_Control_R);
 	keymap["ALT"]           = keysymToKeycode(XK_Alt_L);
+	keymap["ALT_L"]         = keysymToKeycode(XK_Alt_L);
+	keymap["ALT_R"]         = keysymToKeycode(XK_Alt_R);
 	keymap["CAPSLOCK"]      = keysymToKeycode(XK_Caps_Lock);
 	keymap["NUMLOCK"]       = keysymToKeycode(XK_Num_Lock);
 	keymap["SCROLLLOCK"]    = keysymToKeycode(XK_Scroll_Lock);
