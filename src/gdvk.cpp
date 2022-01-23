@@ -23,7 +23,7 @@ void GDVK::_init() {
 	Godot::print("Opening X11 display.");
 	xdisplay = XOpenDisplay(NULL);
 	if (!xdisplay) {
-		Godot::print("Error opening X11 display");
+		Godot::print_error("Error opening X11 display", "GDVK::_init", "gdvk.cpp", __LINE__);
 	}
 #endif
 	generateKeymap();
@@ -48,6 +48,11 @@ void GDVK::setKeyState(const String keyName, bool pressState) {
 	KEYCODE keyCode = lookupKeycode(keyName);
 
 #ifdef __linux__
+	if (pressState)
+		Godot::print("Sending keyboard DOWN event for key '" + keyName + "'");
+	else
+		Godot::print("Sending keyboard UP event for key '" + keyName + "'");
+	
 	if (!XTestFakeKeyEvent(xdisplay, keyCode, pressState, 0)) {
 		Godot::print("Error sending keyboard event for key '" + keyName + "'");
 	}
@@ -60,9 +65,6 @@ void GDVK::setKeyState(const String keyName, bool pressState) {
 	keyInput.wScan = 0; // something unicode
 	keyInput.dwExtraInfo = 0;
 	keyInput.time = 0;
-	//if (!pressState) {
-	//	keyInput.dwFlags = KEYEVENTF_KEYUP;
-	//}
 
 	INPUT inputEvent;
 	inputEvent.type = INPUT_KEYBOARD;
@@ -124,18 +126,20 @@ void GDVK::generateKeymap() {
 	keymap["TAB"]           = keysymToKeycode(XK_Tab);
 	keymap["BACKSPACE"]     = keysymToKeycode(XK_BackSpace);
 	keymap["ENTER"]         = keysymToKeycode(XK_Return);
-	keymap["KP_ENTER"]      = keysymToKeycode(XK_KP_Enter);
+	keymap["PRINT"]         = keysymToKeycode(XK_Print);
+
 	keymap["INSERT"]        = keysymToKeycode(XK_Insert);
 	keymap["DELETE"]        = keysymToKeycode(XK_Delete);
-	keymap["PRINT"]         = keysymToKeycode(XK_Print);
 	keymap["HOME"]          = keysymToKeycode(XK_Home);
 	keymap["END"]           = keysymToKeycode(XK_End);
+	keymap["PAGE_UP"]       = keysymToKeycode(XK_Page_Up);
+	keymap["PAGE_DOWN"]     = keysymToKeycode(XK_Page_Down);
+
 	keymap["LEFT"]          = keysymToKeycode(XK_Left);
 	keymap["UP"]            = keysymToKeycode(XK_Up);
 	keymap["RIGHT"]         = keysymToKeycode(XK_Right);
 	keymap["DOWN"]          = keysymToKeycode(XK_Down);
-	keymap["PAGEUP"]        = keysymToKeycode(XK_Page_Up);
-	keymap["PAGEDOWN"]      = keysymToKeycode(XK_Page_Down);
+	
 	keymap["SHIFT"]         = keysymToKeycode(XK_Shift_L);
 	keymap["SHIFT_L"]       = keysymToKeycode(XK_Shift_L);
 	keymap["SHIFT_R"]       = keysymToKeycode(XK_Shift_R);
@@ -145,27 +149,31 @@ void GDVK::generateKeymap() {
 	keymap["ALT"]           = keysymToKeycode(XK_Alt_L);
 	keymap["ALT_L"]         = keysymToKeycode(XK_Alt_L);
 	keymap["ALT_R"]         = keysymToKeycode(XK_Alt_R);
-	keymap["CAPSLOCK"]      = keysymToKeycode(XK_Caps_Lock);
-	keymap["NUMLOCK"]       = keysymToKeycode(XK_Num_Lock);
-	keymap["SCROLLLOCK"]    = keysymToKeycode(XK_Scroll_Lock);
-	keymap["KP_MULTIPLY"]   = keysymToKeycode(XK_KP_Multiply);
-	keymap["KP_DIVIDE"]     = keysymToKeycode(XK_KP_Divide);
-	keymap["KP_SUBTRACT"]   = keysymToKeycode(XK_KP_Subtract);
-	keymap["KP_ADD"]        = keysymToKeycode(XK_KP_Add);
-	keymap["KP_PERIOD"]     = keysymToKeycode(XK_KP_Separator); // period or comma on keypad
+	keymap["ALT_GR"]        = keysymToKeycode(XK_ISO_Level3_Shift);// Alt Gr
 	keymap["SUPER"]         = keysymToKeycode(XK_Super_L);
 	keymap["SUPER_L"]       = keysymToKeycode(XK_Super_L);
 	keymap["SUPER_R"]       = keysymToKeycode(XK_Super_R);
 	keymap["MENU"]          = keysymToKeycode(XK_Menu);
 
+	keymap["CAPSLOCK"]      = keysymToKeycode(XK_Caps_Lock);
+	keymap["NUMLOCK"]       = keysymToKeycode(XK_Num_Lock);
+	keymap["SCROLLLOCK"]    = keysymToKeycode(XK_Scroll_Lock);
+	
+	keymap["KP_MULTIPLY"]   = keysymToKeycode(XK_KP_Multiply);
+	keymap["KP_DIVIDE"]     = keysymToKeycode(XK_KP_Divide);
+	keymap["KP_SUBTRACT"]   = keysymToKeycode(XK_KP_Subtract);
+	keymap["KP_ADD"]        = keysymToKeycode(XK_KP_Add);
+	keymap["KP_ENTER"]      = keysymToKeycode(XK_KP_Enter);
+	keymap["KP_PERIOD"]     = keysymToKeycode(XK_KP_Separator); // period or comma on keypad
+
 	keymap["BACK"]          = keysymToKeycode(XF86XK_Back);     // browser back
 	keymap["FORWARD"]       = keysymToKeycode(XF86XK_Forward);  // browser forward
-	keymap["VOLUMEDOWN"]    = keysymToKeycode(XF86XK_AudioLowerVolume);
-	keymap["VOLUMEUP"]      = keysymToKeycode(XF86XK_AudioRaiseVolume);
-	keymap["MEDIAPLAY"]     = keysymToKeycode(XF86XK_AudioPlay);
-	keymap["MEDIASTOP"]     = keysymToKeycode(XF86XK_AudioStop);
-	keymap["MEDIAPREVIOUS"] = keysymToKeycode(XF86XK_AudioPrev);
-	keymap["MEDIANEXT"]     = keysymToKeycode(XF86XK_AudioNext);
+	keymap["VOLUME_DOWN"]   = keysymToKeycode(XF86XK_AudioLowerVolume);
+	keymap["VOLUME_UP"]     = keysymToKeycode(XF86XK_AudioRaiseVolume);
+	keymap["MEDIA_PLAY"]    = keysymToKeycode(XF86XK_AudioPlay);
+	keymap["MEDIA_STOP"]    = keysymToKeycode(XF86XK_AudioStop);
+	keymap["MEDIA_PREVIOUS"]= keysymToKeycode(XF86XK_AudioPrev);
+	keymap["MEDIA_NEXT"]    = keysymToKeycode(XF86XK_AudioNext);
 
 	keymap["SPACE"]         = keysymToKeycode(XK_space);
 	keymap["EXCLAM"]        = keysymToKeycode(XK_exclam);       // !
@@ -193,10 +201,10 @@ void GDVK::generateKeymap() {
 	keymap["QUESTION"]      = keysymToKeycode(XK_question);     // ?
 	keymap["AT"]            = keysymToKeycode(XK_at);           // @
 
-	keymap["BRACKETLEFT"]   = keysymToKeycode(XK_bracketleft);  // [
-	keymap["BRACKETRIGHT"]  = keysymToKeycode(XK_bracketright); // ]
-	keymap["BRACELEFT"]     = keysymToKeycode(XK_braceleft);    // {
-	keymap["BRACERIGHT"]    = keysymToKeycode(XK_braceright);   // }
+	keymap["BRACKET_LEFT"]  = keysymToKeycode(XK_bracketleft);  // [
+	keymap["BRACKET_RIGHT"] = keysymToKeycode(XK_bracketright); // ]
+	keymap["BRACE_LEFT"]    = keysymToKeycode(XK_braceleft);    // {
+	keymap["BRACE_RIGHT"]   = keysymToKeycode(XK_braceright);   // }
 
 	keymap["ASCIICIRCUM"]   = keysymToKeycode(XK_asciicircum);  // ^ character
 	keymap["ASCIITILDE"]    = keysymToKeycode(XK_asciitilde);   // ~ character
@@ -232,43 +240,53 @@ void GDVK::generateKeymap() {
 	keymap["TAB"]           = VK_TAB;
 	keymap["BACKSPACE"]     = VK_BACK;
 	keymap["ENTER"]         = VK_RETURN;
-	keymap["KP_ENTER"]      = VK_RETURN; // should probably be different
+	keymap["PRINT"]         = VK_SNAPSHOT;
+	
 	keymap["INSERT"]        = VK_INSERT;
 	keymap["DELETE"]        = VK_DELETE;
-	keymap["PRINT"]         = VK_SNAPSHOT;
 	keymap["HOME"]          = VK_HOME;
 	keymap["END"]           = VK_END;
+	keymap["PAGE_UP"]       = VK_PRIOR;
+	keymap["PAGE_DOWN"]     = VK_NEXT;
+
 	keymap["LEFT"]          = VK_LEFT;
 	keymap["UP"]            = VK_UP;
 	keymap["RIGHT"]         = VK_RIGHT;
 	keymap["DOWN"]          = VK_DOWN;
-	keymap["PAGEUP"]        = VK_PRIOR;
-	keymap["PAGEDOWN"]      = VK_NEXT;
-	keymap["SHIFT"]         = VK_LSHIFT;
+
+	keymap["SHIFT"]         = VK_SHIFT;
+	keymap["SHIFT_L"]       = VK_LSHIFT;
+	keymap["SHIFT_R"]       = VK_RSHIFT;
 	keymap["CONTROL"]       = VK_CONTROL;
+	keymap["CONTROL_L"]     = VK_LCONTROL;
+	keymap["CONTROL_R"]     = VK_RCONTROL;
 	keymap["ALT"]           = VK_MENU;
-	keymap["CAPSLOCK"]      = VK_CAPITAL;
-	keymap["NUMLOCK"]       = VK_NUMLOCK;
-	keymap["SCROLLLOCK"]    = VK_SCROLL;
-	keymap["KP_MULTIPLY"]   = VK_MULTIPLY;
-	keymap["KP_DIVIDE"]     = VK_DIVIDE;
-	keymap["KP_SUBTRACT"]   = VK_SUBTRACT;
-	keymap["KP_ADD"]        = VK_ADD;
-	keymap["KP_PERIOD"]     = VK_DECIMAL;
+	keymap["ALT_L"]         = VK_MENU;
+	keymap["ALT_R"]         = VK_MENU;
 	keymap["SUPER"]         = VK_LWIN;
 	keymap["SUPER_L"]       = VK_LWIN;
 	keymap["SUPER_R"]       = VK_RWIN;
 	keymap["MENU"]          = VK_RMENU;
 
+	keymap["CAPSLOCK"]      = VK_CAPITAL;
+	keymap["NUMLOCK"]       = VK_NUMLOCK;
+	keymap["SCROLLLOCK"]    = VK_SCROLL;
+
+	keymap["KP_MULTIPLY"]   = VK_MULTIPLY;
+	keymap["KP_DIVIDE"]     = VK_DIVIDE;
+	keymap["KP_SUBTRACT"]   = VK_SUBTRACT;
+	keymap["KP_ADD"]        = VK_ADD;
+	keymap["KP_ENTER"]      = VK_RETURN; // should probably be different
+	keymap["KP_PERIOD"]     = VK_DECIMAL;
 
 	keymap["BACK"]          = VK_BROWSER_BACK;
 	keymap["FORWARD"]       = VK_BROWSER_FORWARD;
-	keymap["VOLUMEDOWN"]    = VK_VOLUME_DOWN;
-	keymap["VOLUMEUP"]      = VK_VOLUME_UP;
-	keymap["MEDIAPLAY"]     = VK_MEDIA_PLAY_PAUSE;
-	keymap["MEDIASTOP"]     = VK_MEDIA_STOP;
-	keymap["MEDIAPREVIOUS"] = VK_MEDIA_NEXT_TRACK;
-	keymap["MEDIANEXT"]     = VK_MEDIA_PREV_TRACK;
+	keymap["VOLUME_DOWN"]   = VK_VOLUME_DOWN;
+	keymap["VOLUME_UP"]     = VK_VOLUME_UP;
+	keymap["MEDIA_PLAY"]    = VK_MEDIA_PLAY_PAUSE;
+	keymap["MEDIA_STOP"]    = VK_MEDIA_STOP;
+	keymap["MEDIA_PREVIOUS"]= VK_MEDIA_NEXT_TRACK;
+	keymap["MEDIA_NEXT"]    = VK_MEDIA_PREV_TRACK;
 
 	keymap["SPACE"]         = VK_SPACE;
 	keymap["EXCLAM"]        = 0;
