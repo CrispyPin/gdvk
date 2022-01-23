@@ -47,12 +47,14 @@ void GDVK::keyUp(const String keyName) {
 void GDVK::setKeyState(const String keyName, bool pressState) {
 	KEYCODE keyCode = lookupKeycode(keyName);
 
-#ifdef __linux__
+#ifdef _DEBUG
 	if (pressState)
 		Godot::print("Sending keyboard DOWN event for key '" + keyName + "'");
 	else
 		Godot::print("Sending keyboard UP event for key '" + keyName + "'");
-	
+#endif
+
+#ifdef __linux__
 	if (!XTestFakeKeyEvent(xdisplay, keyCode, pressState, 0)) {
 		Godot::print("Error sending keyboard event for key '" + keyName + "'");
 	}
