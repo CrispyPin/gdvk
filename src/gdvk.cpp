@@ -202,6 +202,7 @@ void GDVK::generateKeymap() {
 	keymap["GREATER"]       = keysymToKeycode(XK_greater);      // >
 	keymap["QUESTION"]      = keysymToKeycode(XK_question);     // ?
 	keymap["AT"]            = keysymToKeycode(XK_at);           // @
+	keymap["SECTION"]       = keysymToKeycode(XK_section);      // § character
 
 	keymap["BRACKET_LEFT"]  = keysymToKeycode(XK_bracketleft);  // [
 	keymap["BRACKET_RIGHT"] = keysymToKeycode(XK_bracketright); // ]
@@ -210,8 +211,10 @@ void GDVK::generateKeymap() {
 
 	keymap["ASCIICIRCUM"]   = keysymToKeycode(XK_asciicircum);  // ^ character
 	keymap["ASCIITILDE"]    = keysymToKeycode(XK_asciitilde);   // ~ character
-	keymap["QUOTELEFT"]     = keysymToKeycode(XK_quoteleft);    // ` character
-	keymap["ASCIIGRAVE"]    = keysymToKeycode(XK_quoteleft);    // ` character
+
+	// these appear to cause crashes
+	//keymap["QUOTELEFT"]     = keysymToKeycode(XK_quoteleft);    // ` character
+	//keymap["ASCIIGRAVE"]    = keysymToKeycode(XK_acute);        // ` character
 
 	// dead keys for accents
 	keymap["ACUTE"]         = keysymToKeycode(XK_dead_acute);   // ´
@@ -315,6 +318,7 @@ void GDVK::generateKeymap() {
 	keymap["GREATER"]       = 0;
 	keymap["QUESTION"]      = 0;
 	keymap["AT"]            = 0;
+	keymap["SECTION"]       = 0;
 
 	keymap["BRACKETLEFT"]   = 0;
 	keymap["BRACKETRIGHT"]  = 0;
@@ -323,8 +327,6 @@ void GDVK::generateKeymap() {
 
 	keymap["ASCIICIRCUM"]   = 0;
 	keymap["ASCIITILDE"]    = 0;
-	keymap["QUOTELEFT"]     = 0;
-	keymap["ASCIIGRAVE"]    = 0;
 
 	// dead keys for accents
 	keymap["ACUTE"]         = 0;
